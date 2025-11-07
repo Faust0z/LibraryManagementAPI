@@ -33,19 +33,29 @@ public class GlobalExceptionHandler {
         return body;
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, Object>> handleGenericException(Exception e, HttpServletRequest request) {
+        return buildResponse(e, "InternalServerError", e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleResourceNotFound(ResourceNotFoundException e, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> handleResourceNotFound(RuntimeException e, HttpServletRequest request) {
         return buildResponse(e, HttpStatus.NOT_FOUND, request);
     }
 
-    @ExceptionHandler({BookUnavailableException.class, LoanLimitExceededException.class})
+    @ExceptionHandler({ResourceUnavailableException.class, LoanLimitExceededException.class})
     public ResponseEntity<Map<String, Object>> handleBusinessBadRequest(RuntimeException e, HttpServletRequest request) {
         return buildResponse(e, HttpStatus.BAD_REQUEST, request);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException e, HttpServletRequest request) {
+    @ExceptionHandler(EmailAlreadyInUseException.class)
+    public ResponseEntity<Map<String, Object>> handleConflictExceptions(RuntimeException e, HttpServletRequest request) {
+        return buildResponse(e, HttpStatus.CONFLICT, request);
+    }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException e,
+                                                                          HttpServletRequest request) {
         String cleanMessage = e.getBindingResult().getAllErrors().getFirst().getDefaultMessage();
         Map<String, Object> body = createErrorBody(
                 "ValidationException",
@@ -54,11 +64,5 @@ public class GlobalExceptionHandler {
                 request
         );
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleGenericException(
-            Exception e, HttpServletRequest request) {
-        return buildResponse(e, "InternalServerError", e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 }
