@@ -45,9 +45,9 @@ public class BookService {
     }
 
     @Transactional
-    public BookDTO updateBook(UUID id, UpdateBookDTO dto) {
-        BookEntity existingBook = bookRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
+    public BookDTO updateBook(UUID bookId, UpdateBookDTO dto) {
+        BookEntity existingBook = bookRepository.findById(bookId)
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + bookId));
         modelMapper.map(dto, existingBook);
 
         BookEntity updatedBook = bookRepository.save(existingBook);

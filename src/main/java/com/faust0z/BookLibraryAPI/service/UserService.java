@@ -1,6 +1,5 @@
 package com.faust0z.BookLibraryAPI.service;
 
-import com.faust0z.BookLibraryAPI.dto.CreateUserDTO;
 import com.faust0z.BookLibraryAPI.dto.UpdateUserDTO;
 import com.faust0z.BookLibraryAPI.dto.UserDTO;
 import com.faust0z.BookLibraryAPI.entity.UserEntity;
@@ -37,17 +36,8 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public UserDTO createUser(CreateUserDTO dto) {
-
-        UserEntity User = modelMapper.map(dto, UserEntity.class);
-
-        UserEntity savedUser = userRepository.save(User);
-        return convertToDto(savedUser);
-    }
-
     @Transactional
     public UserDTO updateUser(UUID userId, UpdateUserDTO dto) {
-
         UserEntity existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
         modelMapper.map(dto, existingUser);

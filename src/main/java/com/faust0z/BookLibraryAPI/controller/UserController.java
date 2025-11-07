@@ -1,11 +1,9 @@
 package com.faust0z.BookLibraryAPI.controller;
 
-import com.faust0z.BookLibraryAPI.dto.CreateUserDTO;
+import com.faust0z.BookLibraryAPI.dto.UpdateUserDTO;
 import com.faust0z.BookLibraryAPI.dto.UserDTO;
 import com.faust0z.BookLibraryAPI.entity.UserEntity;
 import com.faust0z.BookLibraryAPI.service.UserService;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -33,10 +31,11 @@ public class UserController {
         return ResponseEntity.ok(userService.convertToDto(currentUser));
     }
 
-    @PostMapping
-    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody CreateUserDTO userDTO) {
-        UserDTO createdUser = userService.createUser(userDTO);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+    @PatchMapping("/me")
+    public ResponseEntity<UserDTO> updateMyProfile(@AuthenticationPrincipal UserEntity currentUser,
+                                                   @RequestBody UpdateUserDTO userData) {
+        UserDTO updatedUser = userService.updateUser(currentUser.getId(), userData);
+        return ResponseEntity.ok(updatedUser);
     }
 }
 

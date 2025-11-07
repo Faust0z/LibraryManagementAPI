@@ -5,9 +5,9 @@ import com.faust0z.BookLibraryAPI.dto.LoanDTO;
 import com.faust0z.BookLibraryAPI.entity.BookEntity;
 import com.faust0z.BookLibraryAPI.entity.LoanEntity;
 import com.faust0z.BookLibraryAPI.entity.UserEntity;
-import com.faust0z.BookLibraryAPI.exception.BookUnavailableException;
 import com.faust0z.BookLibraryAPI.exception.LoanLimitExceededException;
 import com.faust0z.BookLibraryAPI.exception.ResourceNotFoundException;
+import com.faust0z.BookLibraryAPI.exception.ResourceUnavailableException;
 import com.faust0z.BookLibraryAPI.repository.BookRepository;
 import com.faust0z.BookLibraryAPI.repository.LoanRepository;
 import com.faust0z.BookLibraryAPI.repository.UserRepository;
@@ -41,7 +41,7 @@ public class LoanService {
         return modelMapper.map(loan, LoanDTO.class);
     }
 
-    public List<LoanDTO> getLoans(UUID userId) {
+    public List<LoanDTO> getAllLoans(UUID userId) {
         List<LoanEntity> loans;
 
         if (userId != null) {
@@ -67,7 +67,7 @@ public class LoanService {
 
         // --- Business Rule #1 ---
         if (book.getCopies() <= 0) {
-            throw new BookUnavailableException("Book is unavailable: " + book.getName());
+            throw new ResourceUnavailableException("Book is unavailable: " + book.getName());
         }
 
         // --- Business Rule #2 ---
@@ -96,7 +96,7 @@ public class LoanService {
         LoanEntity loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new ResourceNotFoundException("Loan not found with id: " + loanId));
         if (loan.getReturnDate() != null) {
-            throw new BookUnavailableException("This loan has already been returned on " + loan.getReturnDate());
+            throw new ResourceUnavailableException("This loan has already been returned on " + loan.getReturnDate());
         }
         loan.setReturnDate(LocalDate.now());
         LoanEntity savedLoan = loanRepository.save(loan);
