@@ -1,5 +1,6 @@
 A simple Book Library REST API that implements the Spring Boot and the Spring Security frameworks to manage users, books and loans
-in a modern and secure way.
+in a modern and secure way using the specified Controller-Service-Repository indicated by Spring.
+For security, the project includes Spring Security with a JWT implementation. Users receive a JWT token when reaching the auth/login endpoint with correct credentials. JWTs expire after 24hs
 Done in Spring 3.5.7, Java 21 and Maven with a local h2 database.
 
 ### Business rules
