@@ -6,6 +6,9 @@ import com.faust0z.BookLibraryAPI.entity.UserEntity;
 import com.faust0z.BookLibraryAPI.exception.ResourceNotFoundException;
 import com.faust0z.BookLibraryAPI.repository.UserRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +32,7 @@ public class UserService {
         return modelMapper.map(user, UserDTO.class);
     }
 
+    @Cacheable(value = "users", key = "'all'")
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll()
                 .stream()
@@ -36,6 +40,18 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    @Cacheable(value = "users", key = "#userId")
+    public UserDTO getUserbyId(UUID userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        return convertToDto(user);
+    }
+
+    @Caching(evict = {
+            @CacheEvict(value = "users", key = "#userId"),
+            @CacheEvict(value = "users", key = "'all'")
+    })
     @Transactional
     public UserDTO updateUser(UUID userId, UpdateUserDTO dto) {
         UserEntity existingUser = userRepository.findById(userId)

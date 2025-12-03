@@ -12,6 +12,9 @@ import com.faust0z.BookLibraryAPI.repository.BookRepository;
 import com.faust0z.BookLibraryAPI.repository.LoanRepository;
 import com.faust0z.BookLibraryAPI.repository.UserRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +44,7 @@ public class LoanService {
         return modelMapper.map(loan, LoanDTO.class);
     }
 
+    @Cacheable(value = "loans", key = "'all'")
     public List<LoanDTO> getAllLoans() {
         List<LoanEntity> loans = loanRepository.findAllWithUserAndBook();
 
@@ -50,16 +54,29 @@ public class LoanService {
 
     }
 
+    @Cacheable(value = "loans", key = "#loanId")
+    public LoanDTO getLoanbyId(UUID loanId) {
+        LoanEntity loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new ResourceNotFoundException("Loan not found with id: " + loanId));
+
+        return convertToDto(loan);
+    }
+
+    @Cacheable(value = "loans", key = "#userId")
     public List<LoanDTO> getLoansByUserId(UUID userId) {
         List<LoanEntity> loans = loanRepository.findByUserIdWithUserAndBook(userId);
 
         return loans.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
-
     }
 
 
+    @Caching(evict = {
+            @CacheEvict(value = "loans", key = "'all'"),
+            @CacheEvict(value = "loans", key = "#dto.userId"),
+            @CacheEvict(value = "books", key = "'all'")
+    })
     @Transactional
     public LoanDTO createLoan(CreateLoanDTO dto) {
 
@@ -94,7 +111,13 @@ public class LoanService {
         return convertToDto(savedLoan);
     }
 
-    @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "loans", key = "#loanId"),
+            @CacheEvict(value = "loans", key = "'all'"),
+            @CacheEvict(value = "loans", key = "#result.userId"),
+            @CacheEvict(value = "books", key = "'all'"),
+            @CacheEvict(value = "books", key = "#result.bookId")
+    })
     public LoanDTO returnLoan(UUID loanId) {
 
         LoanEntity loan = loanRepository.findById(loanId)

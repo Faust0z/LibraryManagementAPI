@@ -9,6 +9,7 @@ import com.faust0z.BookLibraryAPI.exception.EmailAlreadyInUseException;
 import com.faust0z.BookLibraryAPI.exception.ResourceUnavailableException;
 import com.faust0z.BookLibraryAPI.repository.UserRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -54,6 +55,7 @@ public class AuthService {
         return new LoginResponseDTO(token, userDTO);
     }
 
+    @CacheEvict(value = "users", key = "'all'")
     public UserDTO register(RegisterRequestDTO registerRequest) {
         if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
             throw new EmailAlreadyInUseException("Email address already in use.");

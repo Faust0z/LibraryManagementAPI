@@ -31,6 +31,12 @@ public class LoanController {
         return ResponseEntity.ok(loanService.getAllLoans());
     }
 
+    @GetMapping("/{loanId}")
+    public ResponseEntity<LoanDTO> getLoanById(@PathVariable UUID loanId) {
+        LoanDTO loan = loanService.getLoanbyId(loanId);
+        return ResponseEntity.ok(loan);
+    }
+
     @GetMapping("/me")
     public ResponseEntity<List<LoanDTO>> getMyLoans(@AuthenticationPrincipal UserEntity currentUser) {
         return ResponseEntity.ok(loanService.getLoansByUserId(currentUser.getId()));

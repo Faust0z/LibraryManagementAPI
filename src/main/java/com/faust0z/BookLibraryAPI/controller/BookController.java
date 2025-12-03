@@ -28,6 +28,12 @@ public class BookController {
         return ResponseEntity.ok(books);
     }
 
+    @GetMapping("/{bookId}")
+    public ResponseEntity<BookDTO> getBookById(@PathVariable UUID bookId) {
+        BookDTO book = bookService.getBookbyId(bookId);
+        return ResponseEntity.ok(book);
+    }
+
     @PostMapping
     public ResponseEntity<BookDTO> createBook(@Valid @RequestBody CreateBookDTO bookDTO) {
         BookDTO createdBook = bookService.createBook(bookDTO);
