@@ -1,4 +1,4 @@
-A Book Library REST API done in Spring Boot to manage users, books and loans in a modern and secure way.
+A Library Management REST API done in Spring Boot to manage users, books and loans in a modern and secure way.
 The system implements:
 
 - The Spring Security framework for security with a JWT implementation. Users receive a JWT token when reaching the auth/login
