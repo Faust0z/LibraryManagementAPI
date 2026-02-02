@@ -3,6 +3,7 @@ package com.faust0z.BookLibraryAPI.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -51,6 +52,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EmailAlreadyInUseException.class)
     public ResponseEntity<Map<String, Object>> handleConflictExceptions(RuntimeException e, HttpServletRequest request) {
         return buildResponse(e, HttpStatus.CONFLICT, request);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Map<String, Object>> handleAuthenticationException(AuthenticationException e, HttpServletRequest request) {
+        return buildResponse(e, "AuthenticationFailure", "Incorrect email or password", HttpStatus.UNAUTHORIZED, request);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

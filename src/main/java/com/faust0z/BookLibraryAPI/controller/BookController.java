@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/books")
-@Tag(name = "Books", description = "Library inventory management")
+@Tag(name = "Books", description = "Library's books inventory management")
 public class BookController {
 
     private final BookService bookService;
