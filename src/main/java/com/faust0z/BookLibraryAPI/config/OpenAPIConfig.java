@@ -26,7 +26,19 @@ public class OpenAPIConfig {
         Info info = new Info()
                 .title("Library Management API")
                 .version("1.0")
-                .description("This API exposes endpoints to manage a library.")
+                .description("""
+                        <h2>A SpringBoot API to manage Users👥, Books📖, and Loans🗒️.</h2>
+                        <br>
+                        
+                        <h2>🚀 User guide:</h3>
+                        <ol>
+                            <li><h3>Execute the <code>/auth/login</code> endpoint to receive a valid access token.</h3></li>
+                            <li><h3>Copy the access token and paste it into the <code>Authorize 🔓</code> button (top right). The example user has admin access.</h3></li>
+                        </ol>
+                        <br>
+                        <br>
+                        <h3><a href='https://github.com/faust0z/librarymanagementapi' target='_blank'>Link to source code</a></h3>
+                        """)
                 .contact(new Contact().name("Faust0z").email("fausto.z77@hotmail.com"));
 
         return new OpenAPI()

@@ -119,6 +119,7 @@ public class LoanService {
             @CacheEvict(value = "books", key = "'list:all'"),
             @CacheEvict(value = "books", key = "'details:' + #result.bookId")
     })
+    @Transactional
     public LoanDTO returnLoan(UUID loanId) {
 
         LoanEntity loan = loanRepository.findById(loanId)
