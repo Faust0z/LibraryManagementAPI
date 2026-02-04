@@ -2,7 +2,6 @@ package com.faust0z.BookLibraryAPI.controller;
 
 import com.faust0z.BookLibraryAPI.dto.CreateLoanDTO;
 import com.faust0z.BookLibraryAPI.dto.LoanDTO;
-import com.faust0z.BookLibraryAPI.entity.UserEntity;
 import com.faust0z.BookLibraryAPI.service.LoanService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -61,8 +61,9 @@ public class LoanController {
             @ApiResponse(responseCode = "200", description = "Loans found successfully"),
     })
     @GetMapping("/me")
-    public ResponseEntity<List<LoanDTO>> getMyLoans(@Parameter(hidden = true) @AuthenticationPrincipal UserEntity currentUser) {
-        return ResponseEntity.ok(loanService.getLoansByUserId(currentUser.getId()));
+    public ResponseEntity<List<LoanDTO>> getMyLoans(@Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        return ResponseEntity.ok(loanService.getLoansByUserId(userId));
     }
 
     @Operation(

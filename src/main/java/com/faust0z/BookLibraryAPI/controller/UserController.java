@@ -2,16 +2,15 @@ package com.faust0z.BookLibraryAPI.controller;
 
 import com.faust0z.BookLibraryAPI.dto.UpdateUserDTO;
 import com.faust0z.BookLibraryAPI.dto.UserDTO;
-import com.faust0z.BookLibraryAPI.entity.UserEntity;
 import com.faust0z.BookLibraryAPI.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,8 +53,11 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "User found successfully"),
     })
     @GetMapping("/me")
-    public ResponseEntity<UserDTO> getMyProfile(@AuthenticationPrincipal @Parameter(hidden = true) UserEntity currentUser) {
-        return ResponseEntity.ok(userService.convertToDto(currentUser));
+    public ResponseEntity<UserDTO> getMyProfile(@AuthenticationPrincipal UserDetails userDetails) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        UserDTO user = userService.getUserbyId(userId);
+
+        return ResponseEntity.ok(user);
     }
 
     @Operation(summary = "Patch the current user's data")
@@ -64,9 +66,12 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Invalid input")
     })
     @PatchMapping("/me")
-    public ResponseEntity<UserDTO> updateMyProfile(@AuthenticationPrincipal @Parameter(hidden = true) UserEntity currentUser,
-                                                   @Valid @RequestBody UpdateUserDTO userData) {
-        UserDTO updatedUser = userService.updateUser(currentUser.getId(), userData);
+    public ResponseEntity<UserDTO> updateMyProfile(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @Valid @RequestBody UpdateUserDTO userData) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        UserDTO updatedUser = userService.updateUser(userId, userData);
+
         return ResponseEntity.ok(updatedUser);
     }
 }
