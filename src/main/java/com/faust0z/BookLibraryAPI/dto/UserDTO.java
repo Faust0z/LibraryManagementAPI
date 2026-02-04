@@ -3,6 +3,7 @@ package com.faust0z.BookLibraryAPI.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -15,4 +16,7 @@ public class UserDTO {
 
     @Schema(description = "The user's email", example = "John.doe@example.com")
     private String email;
+
+    @Schema(description = "The time and date the user was created", example = "2024-01-01T10:00:00")
+    private LocalDateTime createdAt;
 }
