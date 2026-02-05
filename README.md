@@ -2,12 +2,14 @@ A Library Management REST API done in Spring Boot to manage users, books and loa
 The system implements:
 
 - The Spring Security framework for security with a JWT implementation. Users receive a JWT token when reaching the auth/login
-  endpoint with correct credentials. JWTs expire after 24hs.
-- The correct Controller-Service-Repository design indicated by Spring.
+  endpoint with correct credentials. JWTs expire after 1hour.
+- A Controller-Service-Repository design indicated by Spring.
 - ModelMapper and DTOs to ensure that the requests and responses are done in a structured and DRY way.
 - A GlobalExceptionHandler and custom exceptions for different business rules.
+- Caching with redis.
+- User roles: ADMIN or USER.
 
-_Done in Spring 3.5.7, Java 21 and Maven with Postgres as database and Redis as caching._
+_Done in Spring 3.5.7, Java 21, Docker, Flyway and Maven with Postgres as database and Redis as caching._
 
 ### How to run
 
