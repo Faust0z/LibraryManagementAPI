@@ -31,7 +31,10 @@ public class UserController {
         this.userService = userService;
     }
 
-    @Operation(summary = "Get all users")
+    @Operation(summary = "Get all users. Requires ADMIN role.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "403", description = "Forbidden. User does not have ADMIN privileges."),
+    })
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<AdminUserDTO>> getAllUsers() {
@@ -39,9 +42,10 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    @Operation(summary = "Get a single user by ID")
+    @Operation(summary = "Get a single user by ID. Requires ADMIN role.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "User found successfully"),
+            @ApiResponse(responseCode = "403", description = "Forbidden. User does not have ADMIN privileges."),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     @PreAuthorize("hasRole('ADMIN')")
@@ -51,10 +55,7 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @Operation(
-            summary = "Get the current logged user",
-            description = "This endpoint gets the data by using the JWT, so there are no parameters required"
-    )
+    @Operation(summary = "Get the current logged user's data")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "User found successfully"),
     })

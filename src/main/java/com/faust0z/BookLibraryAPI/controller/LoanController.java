@@ -31,9 +31,13 @@ public class LoanController {
         this.loanService = loanService;
     }
 
-    @Operation(summary = "Gets loans (all loans or filter by user ID.")
+    @Operation(
+            summary = "Gets loans (all loans or filter by user ID.) Requires ADMIN role.",
+            description = "Retrieves a list of loans. Can filter by User ID."
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "User's loans found successfully"),
+            @ApiResponse(responseCode = "403", description = "Forbidden. User does not have ADMIN privileges."),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     @PreAuthorize("hasRole('ADMIN')")
@@ -45,22 +49,20 @@ public class LoanController {
         return ResponseEntity.ok(loanService.getAllLoans());
     }
 
-    @Operation(summary = "Get a single loan by ID")
+    @Operation(summary = "Get a single loan by ID. Requires ADMIN role.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Loan found successfully"),
+            @ApiResponse(responseCode = "403", description = "Forbidden. User does not have ADMIN privileges."),
             @ApiResponse(responseCode = "404", description = "Loan not found")
     })
-    @GetMapping("/{loanId}")
     @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{loanId}")
     public ResponseEntity<AdminLoanDTO> getLoanById(@PathVariable UUID loanId) {
         AdminLoanDTO loan = loanService.getLoanbyId(loanId);
         return ResponseEntity.ok(loan);
     }
 
-    @Operation(
-            summary = "Get the loans of the current logged user",
-            description = "This endpoint gets the data by using the JWT, so there are no parameters required"
-    )
+    @Operation(summary = "Get the loans of the current logged user")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Loans found successfully"),
     })

@@ -47,9 +47,10 @@ public class BookController {
         return ResponseEntity.ok(book);
     }
 
-    @Operation(summary = "Post a new book")
+    @Operation(summary = "Post a new book. Requires ADMIN role.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Book created successfully"),
+            @ApiResponse(responseCode = "403", description = "Forbidden. User does not have ADMIN privileges."),
             @ApiResponse(responseCode = "400", description = "Invalid input (e.g., future date, negative copies)")
     })
     @PreAuthorize("hasRole('ADMIN')")
@@ -59,10 +60,11 @@ public class BookController {
         return new ResponseEntity<>(createdBook, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Patch an existing book")
+    @Operation(summary = "Patch an existing book. Requires ADMIN role.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Book updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input (e.g., future date, negative copies)"),
+            @ApiResponse(responseCode = "403", description = "Forbidden. User does not have ADMIN privileges."),
             @ApiResponse(responseCode = "404", description = "Book not found (Invalid ID)")
     })
     @PreAuthorize("hasRole('ADMIN')")
