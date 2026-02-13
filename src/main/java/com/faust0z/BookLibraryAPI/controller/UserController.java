@@ -80,5 +80,19 @@ public class UserController {
 
         return ResponseEntity.ok(updatedUser);
     }
+
+    @Operation(summary = "Update the current user's password")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Password updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid current password or invalid new password's format")
+    })
+    @PutMapping("/me/password")
+    public ResponseEntity<MyUserDetailsDTO> updateMyPassword(@Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails,
+                                                             @Valid @RequestBody UpdateUserPasswordDTO userData) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        MyUserDetailsDTO updatedUser = userService.updateUserPassword(userId, userData);
+
+        return ResponseEntity.ok(updatedUser);
+    }
 }
 
