@@ -1,9 +1,6 @@
 package com.faust0z.BookLibraryAPI.controller;
 
-import com.faust0z.BookLibraryAPI.dto.AdminUserDTO;
-import com.faust0z.BookLibraryAPI.dto.MyUserDetailsDTO;
-import com.faust0z.BookLibraryAPI.dto.UpdateUserDTO;
-import com.faust0z.BookLibraryAPI.dto.UserDTO;
+import com.faust0z.BookLibraryAPI.dto.*;
 import com.faust0z.BookLibraryAPI.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

@@ -1,9 +1,6 @@
 package com.faust0z.BookLibraryAPI.service;
 
-import com.faust0z.BookLibraryAPI.dto.AdminUserDTO;
-import com.faust0z.BookLibraryAPI.dto.MyUserDetailsDTO;
-import com.faust0z.BookLibraryAPI.dto.UpdateUserDTO;
-import com.faust0z.BookLibraryAPI.dto.UserDTO;
+import com.faust0z.BookLibraryAPI.dto.*;
 import com.faust0z.BookLibraryAPI.entity.UserEntity;
 import com.faust0z.BookLibraryAPI.exception.InvalidPasswordException;
 import com.faust0z.BookLibraryAPI.exception.ResourceNotFoundException;
