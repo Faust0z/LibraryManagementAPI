@@ -1,4 +1,10 @@
-name: Java CI with Maven.
+name: CI Unit Tests with Maven.
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  checks: write
 
 on:
   push:
@@ -29,3 +35,10 @@ jobs:
         with:
           name: test-reports
           path: target/surefire-reports/
+
+      - name: Publish Test Report
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+            target/surefire-reports/**/*.xml
