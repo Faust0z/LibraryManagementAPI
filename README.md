@@ -46,3 +46,6 @@ everything in a container with `docker-compose --profile prod up --build`.
 Users can get their user info and loans by `/users/me` and `/loans/me` respectively.
 
 ![database-schema](database-schema.png)
+
+**WARNING**: the `aplications-prod.properties` properties that disable swagger are commented out to be able to see the docs in
+prod.
