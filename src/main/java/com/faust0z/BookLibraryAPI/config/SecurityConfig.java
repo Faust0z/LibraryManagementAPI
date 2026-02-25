@@ -1,6 +1,7 @@
 package com.faust0z.BookLibraryAPI.config;
 
 import com.faust0z.BookLibraryAPI.filter.JwtAuthenticationFilter;
+import com.faust0z.BookLibraryAPI.filter.MdcLoggingFilter;
 import com.faust0z.BookLibraryAPI.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,7 +50,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new MdcLoggingFilter(), JwtAuthenticationFilter.class);
 
         return http.build();
     }

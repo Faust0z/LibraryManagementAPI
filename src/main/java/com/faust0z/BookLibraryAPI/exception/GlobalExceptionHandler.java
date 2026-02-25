@@ -1,6 +1,7 @@
 package com.faust0z.BookLibraryAPI.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -13,6 +14,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -22,6 +24,15 @@ public class GlobalExceptionHandler {
 
     private ResponseEntity<Map<String, Object>> buildResponse(Exception e, String error, String message, HttpStatus status,
                                                               HttpServletRequest request) {
+
+        if (status.is5xxServerError()) {
+            log.error("Server Error [{}]: {} - Path: {}", status.value(), message, request.getRequestURI(), e);
+        } else if (status.is4xxClientError()) {
+            log.warn("Client Error [{}]: {} - Path: {}", status.value(), message, request.getRequestURI());
+        } else {
+            log.info("Response Status [{}]: {} - Path: {}", status.value(), message, request.getRequestURI());
+        }
+
         return new ResponseEntity<>(createErrorBody(error, message, status, request), status);
     }
 
@@ -70,12 +81,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException e,
                                                                           HttpServletRequest request) {
         String cleanMessage = e.getBindingResult().getAllErrors().getFirst().getDefaultMessage();
-        Map<String, Object> body = createErrorBody(
-                "ValidationException",
-                cleanMessage,
-                HttpStatus.BAD_REQUEST,
-                request
-        );
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        return buildResponse(e, "ValidationException", cleanMessage, HttpStatus.BAD_REQUEST, request);
     }
 }
