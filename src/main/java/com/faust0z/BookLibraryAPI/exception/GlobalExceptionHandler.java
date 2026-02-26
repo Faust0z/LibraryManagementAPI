@@ -83,4 +83,23 @@ public class GlobalExceptionHandler {
         String cleanMessage = e.getBindingResult().getAllErrors().getFirst().getDefaultMessage();
         return buildResponse(e, "ValidationException", cleanMessage, HttpStatus.BAD_REQUEST, request);
     }
+
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, Object>> handleHttpMessageNotReadable(Exception e, HttpServletRequest request) {
+        return buildResponse(e, "Malformed JSON", "The request body is invalid or missing required formats.",
+                HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(org.springframework.web.HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<Map<String, Object>> handleMethodNotSupported(Exception e, HttpServletRequest request) {
+        return buildResponse(e, "MethodNotAllowed", e.getMessage(),
+                HttpStatus.METHOD_NOT_ALLOWED, request);
+    }
+
+    @ExceptionHandler({org.springframework.web.context.request.async.AsyncRequestNotUsableException.class,
+            org.apache.catalina.connector.ClientAbortException.class})
+    public void handleClientDisconnect(Exception e, HttpServletRequest request) {
+        log.debug("Client closed connection prematurely for path: {} - Message: {}",
+                request.getRequestURI(), e.getMessage());
+    }
 }
