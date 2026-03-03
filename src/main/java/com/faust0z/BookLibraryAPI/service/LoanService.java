@@ -6,6 +6,7 @@ import com.faust0z.BookLibraryAPI.dto.LoanDTO;
 import com.faust0z.BookLibraryAPI.entity.BookEntity;
 import com.faust0z.BookLibraryAPI.entity.LoanEntity;
 import com.faust0z.BookLibraryAPI.entity.UserEntity;
+import com.faust0z.BookLibraryAPI.exception.AlreadyLoanedBookException;
 import com.faust0z.BookLibraryAPI.exception.LoanLimitExceededException;
 import com.faust0z.BookLibraryAPI.exception.ResourceNotFoundException;
 import com.faust0z.BookLibraryAPI.exception.ResourceUnavailableException;
@@ -94,6 +95,12 @@ public class LoanService {
         }
 
         // --- Business Rule #2 ---
+        log.debug("Checking if user {} already has an active loan for book {}", user.getId(), book.getId());
+        if (loanRepository.existsByUserIdAndBookIdAndReturnDateIsNull(user.getId(), book.getId())) {
+            throw new AlreadyLoanedBookException("User " + user.getId() + " is already loaning book " + book.getId());
+        }
+
+        // --- Business Rule #3 ---
         int activeLoans = loanRepository.countByUserIdAndReturnDateIsNull(user.getId());
         log.debug("User currently has {} active loans", activeLoans);
 

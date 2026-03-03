@@ -85,7 +85,7 @@ public class LoanController {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Loan created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input or Loan limit reached for the user"),
+            @ApiResponse(responseCode = "400", description = "Invalid input, the user has the book already loaned or Loan limit reached for the user"),
             @ApiResponse(responseCode = "404", description = "Loan not found")
     })
     @PostMapping

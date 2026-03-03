@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({ResourceUnavailableException.class, LoanLimitExceededException.class, IncorrectPasswordException.class,
-            SamePasswordException.class})
+            SamePasswordException.class, AlreadyLoanedBookException.class})
     public ResponseEntity<Map<String, Object>> handleBusinessBadRequest(RuntimeException e, HttpServletRequest request) {
         return buildResponse(e, HttpStatus.BAD_REQUEST, request);
     }

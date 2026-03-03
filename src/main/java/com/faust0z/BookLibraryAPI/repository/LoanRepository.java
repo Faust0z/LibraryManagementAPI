@@ -18,4 +18,6 @@ public interface LoanRepository extends JpaRepository<LoanEntity, UUID> {
     List<LoanEntity> findAllWithUserAndBook();
 
     int countByUserIdAndReturnDateIsNull(UUID userId);
+
+    boolean existsByUserIdAndBookIdAndReturnDateIsNull(UUID userId, UUID bookId);
 }
