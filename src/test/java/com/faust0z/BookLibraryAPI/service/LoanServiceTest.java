@@ -5,6 +5,7 @@ import com.faust0z.BookLibraryAPI.dto.LoanDTO;
 import com.faust0z.BookLibraryAPI.entity.BookEntity;
 import com.faust0z.BookLibraryAPI.entity.LoanEntity;
 import com.faust0z.BookLibraryAPI.entity.UserEntity;
+import com.faust0z.BookLibraryAPI.exception.AlreadyLoanedBookException;
 import com.faust0z.BookLibraryAPI.exception.LoanLimitExceededException;
 import com.faust0z.BookLibraryAPI.exception.ResourceNotFoundException;
 import com.faust0z.BookLibraryAPI.exception.ResourceUnavailableException;
@@ -93,6 +94,31 @@ class LoanServiceTest {
         assertThatThrownBy(() -> loanService.createLoan(dto))
                 .isInstanceOf(ResourceUnavailableException.class)
                 .hasMessageContaining("Book is unavailable");
+    }
+
+    @Test
+    void createLoan_WhenUserAlreadyHasBook_ShouldThrowException() {
+        UUID userId = UUID.randomUUID();
+        UUID bookId = UUID.randomUUID();
+        CreateLoanDTO dto = new CreateLoanDTO();
+        dto.setUserId(userId);
+        dto.setBookId(bookId);
+
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(userId);
+
+        BookEntity book = new BookEntity();
+        book.setId(bookId);
+        book.setCopies(5);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(userEntity));
+        when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
+
+        when(loanRepository.existsByUserIdAndBookIdAndReturnDateIsNull(userId, bookId)).thenReturn(true);
+
+        assertThatThrownBy(() -> loanService.createLoan(dto))
+                .isInstanceOf(AlreadyLoanedBookException.class)
+                .hasMessageContaining("is already loaning book");
     }
 
     @Test
