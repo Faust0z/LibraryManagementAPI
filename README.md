@@ -1,4 +1,74 @@
-# Library Management REST API
+# Versión Español: API REST de Gestión de Biblioteca
+
+Una API REST de Gestión de Biblioteca construida con Spring Boot para gestionar usuarios, libros y préstamos de forma moderna,
+escalable y segura. _Construida con Spring Boot 3.5.7, Java 21, Docker, Flyway y Maven. Utiliza PostgreSQL (Supabase) para la base
+de datos y Redis (Upstash) para la caché._
+
+### Características Principales
+
+- **Autenticación y Seguridad:** Spring Security con implementación de JWT sin estado (stateless). Los tokens expiran después de 1
+  hora. Control de acceso basado en roles (USER vs ADMIN).
+- **Arquitectura:** Patrón estándar Controller-Service-Repository.
+- **Mapeo de Datos:** Utiliza MapStruct y DTOs para asegurar que las peticiones (requests) y respuestas (responses) estén
+  estructuradas, sean seguras en cuanto a tipos (type-safe) y de alto rendimiento.
+- **Manejo de Errores:** `GlobalExceptionHandler` que mapea excepciones de negocio personalizadas a respuestas HTTP estándar.
+- **Caché y Rendimiento:** Integración con Redis para cachear los endpoints de mayor acceso.
+- **Auditoría de Base de Datos:** Las entidades base rastrean automáticamente las marcas de tiempo (timestamps) `created_at` y
+  `last_modified_at`.
+- **Observabilidad:** Spring Boot Actuator habilitado para verificaciones de estado (health checks) en tiempo real, monitoreo de
+  métricas y nivelación dinámica de logs (integrado con Better Stack).
+- **Documentación:** Swagger UI autogenerado para la exploración y prueba de endpoints.
+- **CI/CD:** Pipeline de pruebas automatizadas utilizando GitHub Actions.
+
+### Reglas de Negocio
+
+1. **Disponibilidad:** Los usuarios no pueden pedir prestado un libro si no hay copias disponibles. Prestar un libro reduce las
+   copias en 1; devolverlo aumenta las copias en 1.
+2. **Límites de Préstamo:** Un usuario puede tener un máximo de 3 préstamos activos en cualquier momento.
+3. **Préstamos Duplicados:** Un usuario no puede pedir prestadas múltiples copias del mismo libro simultáneamente.
+4. **Roles y Acceso:** Los usuarios pueden tener el rol `USER` o `ADMIN`. Ciertos endpoints administrativos están restringidos a
+   los Administradores.
+5. **Gestión de Perfil:** Los usuarios pueden actualizar su información personal y contraseñas. Pueden recuperar su propia
+   información a través de `/users/me` y `/loans/me`.
+
+### Cómo Ejecutar Localmente
+
+Crea y configura tu archivo `.env` en el directorio raíz:
+
+``` Properties
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+POSTGRES_DB=
+DB_HOST=
+DB_PORT=5432
+REDIS_HOST=
+REDIS_PORT=
+JWT_SECRET=
+JWT_EXPIRATION=
+APP_PORT=8080
+ACTUATOR_USERNAME=
+ACTUATOR_PASSWORD=
+```
+
+Ejecuta una instancia de PostgreSQL y Redis. El archivo `docker-compose.yml` provisto tiene todo lo necesario para levantarlos
+usando: `docker-compose up -d`. Luego, ejecuta la aplicación Spring Boot localmente a través de tu IDE o Maven.
+Alternativamente, puedes ejecutar todo el stack (Base de Datos, Redis y Aplicación) en contenedores con:
+`docker-compose --profile prod up --build`.
+
+### Despliegue en Producción
+
+Esta aplicación está configurada para alojamiento en la nube (cloud hosting):
+
+- Base de datos: Supabase (PostgreSQL con Transaction Pooler para soporte IPv4).
+- Caché: Upstash (Redis Serverless).
+- Host: Render, usando el perfil de Spring `prod`.
+
+_Nota sobre Swagger en Producción_: Para poder visualizar la documentación de la API en el entorno de producción, las propiedades
+que deshabilitan Swagger en `application-prod.properties` están temporalmente comentadas.
+
+---
+
+# English Version: Library Management REST API
 
 A Library Management REST API built with Spring Boot to manage users, books, and loans in a modern, scalable, and secure way.
 _Built with Spring Boot 3.5.7, Java 21, Docker, Flyway, and Maven. Uses PostgreSQL (Supabase) for the database and Redis (Upstash)
